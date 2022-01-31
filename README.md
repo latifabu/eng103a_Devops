@@ -1,3 +1,3 @@
-# what is devOps
-## WHy DeVvOps
+# What is devOps
+## WHy DevOps?
 ### Benefits of DevOps
