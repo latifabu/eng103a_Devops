@@ -1,4 +1,4 @@
-install markdown extensions `All in one`
+
 # What is devOps
 ## Why DevOps?
 ### Benefits of DevOps
