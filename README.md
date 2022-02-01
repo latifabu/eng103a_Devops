@@ -10,7 +10,7 @@
 - Cost - cost effective, automated process, connect with CI/CD pipelines, faster therefore cheaprer
 
 Monolith , - 2 tier & Microservices Architectures - simple words, within a box that has everything is integrated together, from front end to back end .
-To make a change you have to rebuild everything
+To make a change you have to rebuild everything. Microservices are the opposite of a monolith. You have small services that can be deployed individually. Each service has a focus on one aspect of the business functionality. The services work relatively independent of each other and only communicate with the other services when necessary.
 ![virtualisation-with-vagrant-diagram](https://user-images.githubusercontent.com/98215575/152065728-e5e1dc62-7343-4032-b2e6-a40254fae2a6.png)
 
 --------------------------------------------
@@ -19,7 +19,7 @@ To make a change you have to rebuild everything
  - ```https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.6-1/rubyinstaller-devkit-2.6.6-1-x64.exe```
  check ruby version with "ruby --version" in git bash, run as admin
  ### 2. Install Vagrant
- - then install vagrant with: ```https://www.vagrantup.com/```
+ - Then install vagrant with: ```https://www.vagrantup.com/```
  - ```https://www.vagrantup.com/ ```
  - check vagrant version with "vagrant --version" in git bash as admin
 ### 3. Installing Virtualbox
@@ -27,7 +27,7 @@ To make a change you have to rebuild everything
  - Virtual box 6.1.32 and click Windows hosts
  - go to  ```C:\Program Files\Oracle\VirtualBox\drivers\vboxdrv```
  - open git bash as admin and enter desired repository
- - then ```vagrant init ubuntu/xenial64```
+ - Then ```vagrant init ubuntu/xenial64```
  - right click VBoxSup not VBoxDrv.inf 
  - run ```sc start vboxsup``` - in git bash as admin
  - Press the Windows Key and search for Control Panel, go from there to Network and Internet, then Network and Sharing Centre, then Change Adapter Settings.
