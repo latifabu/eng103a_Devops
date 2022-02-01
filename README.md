@@ -11,6 +11,7 @@
 
 Monolith , - 2 tier & Microservices Architectures - simple words, within a box that has everything is integrated together, from front end to back end .
 To make a change you have to rebuild everything
+![virtualisation-with-vagrant-diagram](https://user-images.githubusercontent.com/98215575/152065728-e5e1dc62-7343-4032-b2e6-a40254fae2a6.png)
 
 --------------------------------------------
  ## How to install a the virtual environment (Virtualisation with Vagrant)
