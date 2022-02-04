@@ -239,7 +239,7 @@ end
 ### Reverse Proxy using Nginx
 DO NOT UPDATE VM for this exericse.
 (Uses http to re-direct traffic to multiple servers)
-User's ip is anonymised. Actual proxy is hidden. Below we will hide the port 30003 using reverse proxy. Hidding the port increase security by preventing unnauthorised access to sensitive data.
+User's ip is anonymised. Actual proxy is hidden. Below we will hide the port 3000 using reverse proxy. Hidding the port increase security by preventing unnauthorised access to sensitive data.
 - This link has a guide for setting up Nginz as a Reverse Proxy Server`https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04`
 - Steps prior to step 4 should have been automateda already. Their commands are in the `provision.sh` file.
 - Following step 5:
@@ -318,8 +318,7 @@ end
 ```
 
 
-
-## Step 2 - setting up mongodb insude the db VM
+## Step 2 - setting up mongodb inside the db VM
 - DB connection requirement (prerequiste)
 - What the dependencies for Mongodb( correct version)
 - It should allow access to app
@@ -338,29 +337,187 @@ if(process.env.DB_HOST) {
 }
 ````
 
+### Installing dependencies on db VM
+
+Enter the commands below:
+
+`sudo apt-get update -y`
+`sudo apt-get upgrade -y`
+`sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927`
+`echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list`
+`sudo apt-get update -y`
+`sudo apt-get upgrade -y`
+`sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20`
+`sudo nano /etc/mongod.conf`
+
+- Change the bindip in `mongod.conf` from 127.0.0.1 to `0.0.0.0`- allows anyone to access the db.
+- Then `sudo systemctl restart mongod`
+- `sudo systemctl enable mongod`
+### Connecting app and db VMs
+-1 Enter the app VM
+-2 Now create the env var DB_HOST by entering: `export DB_HOST=mongodb://192.168.10.150:27017/posts`
+-3 Now the `DB_HOST` env var has beem created the if block in app.js will run.
+-4 `printenv DB_HOST`
+-5 `cd app` -> `cd app`
+-6 Then enter `node seeds/seed.js`
+-7 `npm install` then`npm start`
+-8 Check `192.168.10.100:3000/posts` 
+Issue: After creating DB_HOST the post/ page dispalyed "{}". This was resolved my reloading `vagrant app` and `vagrant db` with using `vagrant reload <VM_name>`.
+To make DB_HOST a persistent env var enter these commands in place of steps 2-3:
+- `echo "export DB_HOST='mongodb://192.168.10.150:27017/posts'" >> /home/vagrant/.bashrc`
+- `source /home/vagrant/.bashrc`
+### Automating provisioning of mongodb, app and reverse proxy 
+
+Create a 2nd provision file which was called `provison_db`
+The script within `provision_db`
+```
+ #!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+# echo registers repo
+sudo apt-get update -y
+sudo apt-get upgrade -y 
+sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
+sudo sed -i 's/127.0.0.1/0.0.0.0/' /etc/mongod.conf
+sudo systemctl restart mongod
+sudo systemctl enable mongod
+
+```
+- Original provision.sh was changed to:
+
+```
+#!/bin/bash
+
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install nginx -y
+sudo apt-get install nodejs -y
+sudo apt-get install python-software-properties -y
+curl -sl https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install nodejs -y
+sudo npm install pm2 -g
+echo "export DB_HOST=mongodb://192.168.10.150:27017/posts" >> /home/vagrant/.bashrc
+source /home/vagrant/.bashrc
+sudo rm -rf /etc/nginx/sites-available/default
+sudo cp app/default /etc/nginx/sites-available/
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+
+```
+Automating the reverse proxy
+Created a file called `default` which is referred to when the app is loaded.
+Contains the script below:
+
+```server {
+
+    listen 80;
+
+    server_name _;
+
+    location / {
+
+        proxy_pass http://localhost:3000;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Upgrade $http_upgrade;
+
+        proxy_set_header Connection 'upgrade';
+
+        proxy_set_header Host $host;
+
+        proxy_cache_bypass $http_upgrade;
+
+    }
+
+}  
 
 
+```
+### Amazon Web Service (AWS)
 
+What is AWS?
+- AWS is a cloud platform provided by amazon.It includes infastrcuture, platform and software as a service.
+- AWS offers database storage, compute power and content delivery services for indivduals and businesses.
 
-- change mongo.conf
-- /etc/mongod.conf
-- by default this mongod.conf
-allows 27017 from 127.0.1
-271017 from 0.0.0 - allows anyone to access the db
-- restart mongo
-- enamble mongo
-- back to app vm
-- create env DB_HOST//:192.168.150.27071:posts
+What is cloud computing?
+-Tasks, activties, storage and processes that can be done on your pc or VM can be done on the cloud.
+Types of cloud:
+- Public clouds
+- Private clouds
+- Hybrid cloud is increasing popular, hybrid cloud has better security
+e.g. banks, some inforation is avaliable, and other are avaliable such as mortgage plans etc.
+Confidental work would be on the prvivate server they use a VPN to communicate between server and client.
 
--back to app folder
--npm start
-
-connect the machines using an env called DB_Host
-create DB)host 
-db ip: 192.168.10.150
-export DB_HOST= dp-ip:27017/posts
-192.168.10.100/posts
+Benefits of cloud:
+- scaliablity
+- more reliable and global
+Benefits of AWS:
+- services can be used to deploy on aws
+- aws exceeds over 1mil active users
+- stop spending money running and maintaing data centers
+- pay as you go serivce - cost effective
+- have cutomer serivce, reply within 24 hours. company account response is 12 hours, enterprise account 1 hour 
+- A region in AWS, our region is europe. in one region minimum is 2 activty zones. Multiple avaliablity zones. 
+- AWS global infrastrcuture map is always updating. orange regions soon to open. blue, already open. ireland has 3 avaliabilty zones.
+  
+Why we are able to see different regions interact with each other? So we can select regions that are closest region to the users. when we deploy closer to our user so we can get faster response. BA TEAMS, WE NEED TO KNOW WHO IS GOING to use the product, how many users, when they will use it.Usage times, analysis is needed for scaling. scaling for demand increase.
    
+## Launching an instance in AWS using unbutu
+- Log into your AWS account
+- Find the `EC2` service
+- Navigate to the `launch instance` drop down menu and click `launch instance`
+- Choose an Amazon Machine Image (AMI)
+- Search for `Ubuntu Server 18.04 LTS (HVM), SSD Volume Type - ami-07d8796a2b0f8d29c (64-bit x86) / ami-01ddc0aefcdbc53e7 (64-bit Arm)` and select
+- Choose an instance type, select the `12 nano` type with `1` vCPUSs (can change later)
+- Next configure instance details
+- Select subnet drop down menu and enter `subnet-0429d69d55dfad9d2|DevOpsStudent default 1a`
+- Auto-assign Public IP to `enable`
+- Next page, storage page. Do not change anything
+- Add tags. Key: `NAME` and value `ENG103A_LATIF`
+- Add security group name follwing previous naming convention `ENG103A_LATIF`. Add `ENG103A_LATIF` to description. Due to a mistake my secuirty group name was `launch-wizard-9` but should follow the correct naming convention.
+- Review and launch
+- Launch: `choose a new key pair` and enter `key name`
+
+On local host:
+- `cd ~/ .ssh`
+- `nano eng103a.pem`
+-  enter details into `eng103a.pem`
+-  `cat eng103a.pem` to check content
+-  `chmod 400 eng103a.pem` to change permissions
+-  `ssh -i "eng103a.pem" unbuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com` - unbuntu@ followed by Public IPv4 DNS.
+- enter yes
+- You are now in the VM
+- run:
+ ```
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install nginx -y
+ ```
+
+### Enabling public IP access
+- The public IP needs to show on our browser we must configure the security for this to happen.
+- On your AWS account navigate to `instances` -> `security` -> `security groups link` -> `edit inbound rules` -> `add rule`:
+Enter "HTTP" source: "Anywhere- IPv4 description: "public access"-> save rules.
+
+### Syncing local host files to cloud VM
+- `cd ~/.ssh`
+- `scp -i "~/.ssh/eng103a.pem" -r app ubuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com`
+- Run:
+ ```
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install nginx -y
+ ```
+- Enable port 3000
+
+*-* `instances` -> `security` -> `security groups link` -> `edit inbound rules` -> `add rule`:
+"Custom TCP" Port range: "3000" source: "anywhere-IPv4" description: "public access" > save rules
+
+ 
+
 
 
 
