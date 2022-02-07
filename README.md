@@ -483,7 +483,8 @@ Benefits of AWS:
 - AWS global infrastrcuture map is always updating. orange regions soon to open. blue, already open. ireland has 3 avaliabilty zones.
   
 Why we are able to see different regions interact with each other? So we can select regions that are closest region to the users. when we deploy closer to our user so we can get faster response. BA TEAMS, WE NEED TO KNOW WHO IS GOING to use the product, how many users, when they will use it.Usage times, analysis is needed for scaling. scaling for demand increase.
-   
+![My_project_1](https://user-images.githubusercontent.com/98215575/152761094-f26ed835-797f-4644-acfe-7014e979679e.png)
+
 ## Launching an instance on using AWS
 Here we will launch the app on AWS.
 - Log into your AWS account
