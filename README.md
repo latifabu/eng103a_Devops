@@ -637,8 +637,8 @@ DB_host was then changed again because your ip changes daily.
  source ~/.bashrc
  printenv DB_HOST
 ```
-- After DB_HOST has been saved, change db_host inthe provision_db.sh file.
-- bash provisions_db.sh 
-`npm start`
+- After DB_HOST has been saved
+- `bash provisions_db.sh` 
+- `npm start`
 
 
