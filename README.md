@@ -240,7 +240,7 @@ end
 DO NOT UPDATE VM for this exericse.
 (Uses http to re-direct traffic to multiple servers)
 User's ip is anonymised. Actual proxy is hidden. Below we will hide the port 3000 using reverse proxy. Hidding the port increase security by preventing unnauthorised access to sensitive data.
-- This link has a guide for setting up Nginz as a Reverse Proxy Server`https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04`
+- This link has a guide for setting up Nginx as a Reverse Proxy Server`https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04`
 - Steps prior to step 4 should have been automateda already. Their commands are in the `provision.sh` file.
 - Following step 5:
 
@@ -425,7 +425,8 @@ Automating the reverse proxy
 Created a file called `default` which is referred to when the app is loaded.
 Contains the script below:
 
-```server {
+```
+server {
 
     listen 80;
 
@@ -593,9 +594,50 @@ Then when:
 Additional information  
  -  securtiy group will need to allow app instance to access db (only allow app) because its a databse. We do not want any breaches
  - User will interact with app only, if they want to see posts/. app will request the posts page from 
- - If instance do not show 2/2 status check do instance reboot
+ - If instance do not show 2/2 status check do instance reboot.
 
+### AMI
+- Amazon Machine Image/s
+- AWS has its own AMI as a service
+- It is similar to snapshot in vagrant.
+- To create an AMI, select an instance on your EC2 dashboard. Go to actions -> image and templates and click `create image`
+- Enter image name as `eng103a_name_ami` 
+- Follow the steps when creating a regular instance but adding the security groups from the original instance. Include tab with `name` and `eng103a_name_ami`
+- Launch new instance
+Terminate old app instance by selecting app instance, `instant state` ->`terminate instance`
+-
+### Connecting app with DB using AMi instances
+- Select instance, click connect, ssh client and then copy example
+- Again go back to local host `cd ~/.ssh`
+- Open app 
+- Paste ssh example if the link has `root` in place of `ubuntu` change `root` to `ubuntu`
 
+Blocker:
+Default file had a spacing error between `server_name _` which stopped nginx from activating.
+ 
+```
+sudo rm -rf default
+sudo nano default
 
+```
+Default file was removed and then changed. The standard commands below were then run. 
+
+```
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+npm start
+```
+
+After creating and launching your db AMI. ssh into db and change DB_HOST.
+DB_host was then changed again because your ip changes daily.
+```
+ sudo nano .bashrc
+ printenv DB_HOST
+ source ~/.bashrc
+ printenv DB_HOST
+```
+- After DB_HOST has been saved, change db_host inthe provision_db.sh file.
+- bash provisions_db.sh 
+`npm start`
 
 
