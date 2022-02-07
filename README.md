@@ -320,7 +320,7 @@ end
 
 ## Step 2 - setting up mongodb inside the db VM
 - DB connection requirement (prerequiste)
-- What the dependencies for Mongodb( correct version)
+- What the dependencies for Mongodb (correct version)
 - It should allow access to app
 - Database has been set up in our app VM.We want to configure that database on a seperate VM. In this case mongodb. This VM will have all the prequistes that the app VM has plus addition prerequistes needed for mongodb to launch. The app VM and db VM will connect by using the DB_HOST env var. This variable can be found in the dev documentation. The if statement below has been taken from the documentation and will be fufiled if the env DB_HOST is present. The app will use DB_HOST to fetch data from db and display it on "post/index".
 ````
@@ -344,13 +344,28 @@ Enter the commands below:
 `sudo apt-get update -y`
 `sudo apt-get upgrade -y`
 `sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927`
+
+```
+Downloads the key from keyservers directly into our trusted set of keys.
+- apt-key is used to manage the list of keys used by apt to authenticate packages. Packages
+which have been authenticated using these keys will be considered trusted.
+```
 `echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list`
+```
+Registers the repo
+
+```
 `sudo apt-get update -y`
 `sudo apt-get upgrade -y`
 `sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20`
+
+```
+Installs the package
+```
 `sudo nano /etc/mongod.conf`
 
-- Change the bindip in `mongod.conf` from 127.0.0.1 to `0.0.0.0`- allows anyone to access the db.
+- Change the bindip in `mongod.conf` from 127.0.0.1 to `0.0.0.0`- allows anyone to access the db. Alternatively,
+`sudo sed -i 's/127.0.0.1/0.0.0.0/' /etc/mongod.conf` can be used to change the bindip without having to manually edit the mongod.conf.
 - Then `sudo systemctl restart mongod`
 - `sudo systemctl enable mongod`
 ### Connecting app and db VMs
@@ -359,7 +374,7 @@ Enter the commands below:
 -3 Now the `DB_HOST` env var has beem created the if block in app.js will run.
 -4 `printenv DB_HOST`
 -5 `cd app` -> `cd app`
--6 Then enter `node seeds/seed.js`
+-6 Then enter `node seeds/seed.js` (Populates the db)
 -7 `npm install` then`npm start`
 -8 Check `192.168.10.100:3000/posts` 
 Issue: After creating DB_HOST the post/ page dispalyed "{}". This was resolved my reloading `vagrant app` and `vagrant db` with using `vagrant reload <VM_name>`.
@@ -439,7 +454,7 @@ Contains the script below:
 ### Amazon Web Service (AWS)
 
 What is AWS?
-- AWS is a cloud platform provided by amazon.It includes infastrcuture, platform and software as a service.
+- AWS is a cloud platform provided by amazon. It includes infrastrcuture, platform and software as a service.
 - AWS offers database storage, compute power and content delivery services for indivduals and businesses.
 
 What is cloud computing?
@@ -454,6 +469,9 @@ Confidental work would be on the prvivate server they use a VPN to communicate b
 Benefits of cloud:
 - scaliablity
 - more reliable and global
+- Almost unlimited storage
+- Backup and recovery
+- APIs
 Benefits of AWS:
 - services can be used to deploy on aws
 - aws exceeds over 1mil active users
@@ -465,29 +483,35 @@ Benefits of AWS:
   
 Why we are able to see different regions interact with each other? So we can select regions that are closest region to the users. when we deploy closer to our user so we can get faster response. BA TEAMS, WE NEED TO KNOW WHO IS GOING to use the product, how many users, when they will use it.Usage times, analysis is needed for scaling. scaling for demand increase.
    
-## Launching an instance in AWS using unbutu
+## Launching an instance on using AWS
+Here we will launch the app on AWS.
 - Log into your AWS account
+- Select region Europe-Ireland
 - Find the `EC2` service
 - Navigate to the `launch instance` drop down menu and click `launch instance`
 - Choose an Amazon Machine Image (AMI)
 - Search for `Ubuntu Server 18.04 LTS (HVM), SSD Volume Type - ami-07d8796a2b0f8d29c (64-bit x86) / ami-01ddc0aefcdbc53e7 (64-bit Arm)` and select
-- Choose an instance type, select the `12 nano` type with `1` vCPUSs (can change later)
+- Choose an instance type, select the `12 nano` type with `1` vCPUS (can change later)
 - Next configure instance details
 - Select subnet drop down menu and enter `subnet-0429d69d55dfad9d2|DevOpsStudent default 1a`
 - Auto-assign Public IP to `enable`
 - Next page, storage page. Do not change anything
 - Add tags. Key: `NAME` and value `ENG103A_LATIF`
 - Add security group name follwing previous naming convention `ENG103A_LATIF`. Add `ENG103A_LATIF` to description. Due to a mistake my secuirty group name was `launch-wizard-9` but should follow the correct naming convention.
+- Set SSH sources to "my ip" and although optional, add "only my ip" to description. NOTE: It is always good to add descriptions.
 - Review and launch
 - Launch: `choose a new key pair` and enter `key name`
 
 On local host:
+- Open terminal as admin
+- Download and copy key
 - `cd ~/ .ssh`
 - `nano eng103a.pem`
--  enter details into `eng103a.pem`
+-  enter content into `eng103a.pem`
 -  `cat eng103a.pem` to check content
 -  `chmod 400 eng103a.pem` to change permissions
--  `ssh -i "eng103a.pem" unbuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com` - unbuntu@ followed by Public IPv4 DNS.
+-  Go back to AWS copy and then best the below link into the terminal.
+-  `ssh -i "eng103a.pem" unbuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com:~` - `ssh -i "eng103a.pem" unbuntu@<Public IPv4 DNS:~`>.
 - enter yes
 - You are now in the VM
 - run:
@@ -504,20 +528,72 @@ Enter "HTTP" source: "Anywhere- IPv4 description: "public access"-> save rules.
 
 ### Syncing local host files to cloud VM
 - `cd ~/.ssh`
-- `scp -i "~/.ssh/eng103a.pem" -r app ubuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com`
+- `scp -i "~/.ssh/eng103a.pem" -r app ubuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com` 
 - Run:
  ```
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt install nginx -y
  ```
-- Enable port 3000
-
+- To enable port 3000
+- Return to AWS
+  
 *-* `instances` -> `security` -> `security groups link` -> `edit inbound rules` -> `add rule`:
 "Custom TCP" Port range: "3000" source: "anywhere-IPv4" description: "public access" > save rules
 
- 
+### Creating a second instance for MongoDB
+Similarly, to the steps above when we first made an instance.
+- Launch an EC2 instance again.
+- Follow those steps with these exceptions.
+- Add security tags with key being `NAME` AND `ENG103a_name_db`
+- Add an extra rule with the following:
+   *-* Type: "Custom TCP Rules"
 
+   *-* Port range: 27017
+
+   *-* Source: Anywhere
+
+   *-* Description: allow from app only - (very important as this will allow the application to request information from the db)
+
+- In terminal `~/.ssh`
+- `ssh -i "eng103a.pem" ubuntu@ec2-<YOUR_IP>.<YOUR_LOCATION>-1.compute.amazonaws.com`
+-  `scp -i "~ssh/eng103a.pem" -r ~ /eng103a_DevOps/src/provision_db.sh ubuntu@<your_IP>:~` IP on your AWS always changes. Secure copy of eng103a
+provision_db.sh.
+- This will load `provision_db.sh`
+- Enter commands mannually to install mongodb dependencies and change mongo.conf to allow app acess.
+- Alternatively, you can load `provision_db.sh` script with:
+   
+    *-* `sudo chmod +x provision_db_sh`
+    
+    *-* `sudo ./provision_db_sh`
+This will load the already made `provision_db_sh` by giving it permissions and making it executable.
+- Once completed `sudo systemctl status mongod` to check if everything has been configured correctly.
+- 
+### Completion of 2 tier architecture
+- Return to AWS and check the app launch status.
+- If instance has been stopped, repeat the processes above.
+- Enter app vm 
+- `cd app`
+- Enter the db VM's <Public IPv4 address> (found on aws) into `DB_HOST`.
+
+```
+ sudo nano .bashrc
+ printenv DB_HOST
+ source ~/.bashrc
+ printenv DB_HOST
+```
+To make the DB_HOST env var persistent and executable. 
+Then when:
+`npm install`
+`node seeds/seed.js`
+`npm start`
+
+- Load <YOUR_PUBLIC_IP:3000/POSTS> and it should be running.
+  
+Additional information  
+ -  securtiy group will need to allow app instance to access db (only allow app) because its a databse. We do not want any breaches
+ - User will interact with app only, if they want to see posts/. app will request the posts page from 
+ - If instance do not show 2/2 status check do instance reboot
 
 
 
