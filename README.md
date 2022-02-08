@@ -641,4 +641,29 @@ DB_host was then changed again because your ip changes daily.
 - `bash provisions_db.sh` 
 - `npm start`
 
+## Amazon Machine Image (AMI)
+An AMI is a way to launch a VM on AMS. Similar to snapshot in vagrant an AMI can make a copy of your current instance. Once an AMI is created it can be launched as an instance multiple times.
 
+- To create an AMI:
+-> `Select your current instance` -> CLick `actions` -> `Image and templates` ->`create image`
+- Enter image name `eng103a_<name>_ami`
+
+### Launching AMIs
+- Terminate current instnace which was used to create the AMI.
+- Select AMI then -> `create instance from image`
+- Following the steps to create a regular instance with the exception of the security groups and the name tag. Use the previously created security group.
+Name tag should be `eng103a<name>_from<_instance_name>`
+- Launch instance
+
+### Monitoring with CloudWatch
+- Select instance in EC2 
+- Selecting `monitoring tab` 
+- Select `manage detilaed monitoring` and enable (cost extra)
+- Click `add to dashboard` and create a `new dashboard`
+- Add new CloudWatch window will open.
+- Create an alarm following the previous naming convention.
+- The alarm should send an sns when the CPU utilisation is >= 25%.
+- The CPU_Utilization for our instance was selected.
+- The VM was stressed to test our alarm
+- Within the VM enter `sudo apt install stress`
+- Then `stress -v --cpu 2`
