@@ -508,12 +508,12 @@ On local host:
 - Open terminal as admin
 - Download and copy key
 - `cd ~/ .ssh`
-- `nano eng103a.pem`
--  enter content into `eng103a.pem`
--  `cat eng103a.pem` to check content
--  `chmod 400 eng103a.pem` to change permissions
+- `nano <file>.pem`
+-  enter content into `<file>.pem`
+-  `cat <file>.pem` to check content
+-  `chmod 400 <file>pem` to change permissions
 -  Go back to AWS copy and then best the below link into the terminal.
--  `ssh -i "eng103a.pem" unbuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com:~` - `ssh -i "eng103a.pem" unbuntu@<Public IPv4 DNS:~`>.
+-  `ssh -i "<file>.pem" unbuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com:~` - `ssh -i "<file>.pem" unbuntu@<Public IPv4 DNS:~`>.
 - enter yes
 - You are now in the VM
 - run:
@@ -558,8 +558,8 @@ Similarly, to the steps above when we first made an instance.
    *-* Description: allow from app only - (very important as this will allow the application to request information from the db)
 
 - In terminal `~/.ssh`
-- `ssh -i "eng103a.pem" ubuntu@ec2-<YOUR_IP>.<YOUR_LOCATION>-1.compute.amazonaws.com`
--  `scp -i "~ssh/eng103a.pem" -r ~ /eng103a_DevOps/src/provision_db.sh ubuntu@<your_IP>:~` IP on your AWS always changes. Secure copy of eng103a
+- `ssh -i "<file>.pem" ubuntu@ec2-<YOUR_IP>.<YOUR_LOCATION>-1.compute.amazonaws.com`
+-  `scp -i "~ssh/<file>.pem" -r ~ /eng103a_DevOps/src/provision_db.sh ubuntu@<your_IP>:~` IP on your AWS always changes. Secure copy of eng103a
 provision_db.sh.
 - This will load `provision_db.sh`
 - Enter commands mannually to install mongodb dependencies and change mongo.conf to allow app acess.
@@ -667,3 +667,4 @@ Name tag should be `eng103a<name>_from<_instance_name>`
 - The VM was stressed to test our alarm
 - Within the VM enter `sudo apt install stress`
 - Then `stress -v --cpu 2`
+
