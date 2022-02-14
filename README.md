@@ -530,7 +530,7 @@ Enter "HTTP" source: "Anywhere- IPv4 description: "public access"-> save rules.
 
 ### Syncing local host files to cloud VM
 - `cd ~/.ssh`
-- `scp -i "~/.ssh/eng103a.pem" -r app ubuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com` 
+- `scp -i "~/.ssh/<file.name> -r app ubuntu@ec2-54-155-213-30.eu-west-1.compute.amazonaws.com` 
 - Run:
  ```
 sudo apt update -y
@@ -668,3 +668,8 @@ Name tag should be `eng103a<name>_from<_instance_name>`
 - Within the VM enter `sudo apt install stress`
 - Then `stress -v --cpu 2`
 
+## Auto scaling group(ASG) and Load Balancing
+
+
+- Run `#!/bin/bash` in your spp instance first
+- create a launch instance with the following:
