@@ -1,5 +1,9 @@
 
 # What is DevOps
+
+![13429_ILL_DevOpsLoop](https://user-images.githubusercontent.com/98215575/155888326-cb4d2d03-3aad-4ac7-97ba-500d286cc107.png)
+
+
 ## Why DevOps?
 ### Benefits of DevOps
 
